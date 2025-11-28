@@ -2,8 +2,8 @@ package com.seoudi.core;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 
 import java.time.Duration;
 
@@ -20,23 +20,22 @@ public class DriverFactory {
 
     public static void initDriver() {
         String browser = ConfigReader.getBrowser();
-        if (browser == null || browser.isBlank() || browser.equalsIgnoreCase("chrome")) {
-            String driverPath = ConfigReader.getChromeDriverPath();
+        if (browser == null || browser.isBlank() || browser.equalsIgnoreCase("firefox")) {
+            String driverPath = ConfigReader.getGeckoDriverPath();
             if (driverPath != null && !driverPath.isBlank()) {
-                System.setProperty("webdriver.chrome.driver", driverPath);
+                System.setProperty("webdriver.gecko.driver", driverPath);
             } else {
-                WebDriverManager.chromedriver().setup();
+                WebDriverManager.firefoxdriver().setup();
             }
 
-            ChromeOptions options = new ChromeOptions();
-            options.addArguments("--remote-allow-origins=*");
-            options.addArguments("--window-size=1920,1080");
-            options.addArguments("--disable-gpu", "--no-sandbox");
+            FirefoxOptions options = new FirefoxOptions();
+            options.addArguments("--width=1920", "--height=1080");
+            options.addArguments("--disable-gpu");
             if (ConfigReader.isHeadless()) {
-                options.addArguments("--headless=new");
+                options.addArguments("-headless");
             }
 
-            WebDriver driver = new ChromeDriver(options);
+            WebDriver driver = new FirefoxDriver(options);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
             driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
             driver.manage().deleteAllCookies();

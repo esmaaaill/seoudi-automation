@@ -7,7 +7,7 @@ Full end-to-end UI automation framework for Seoudi Market / Seoudi Supermarket, 
 - Maven
 - Selenium WebDriver 4
 - TestNG 7
-- WebDriverManager (Chrome)
+- WebDriverManager (Firefox)
 - Page Object Model
 
 ## Project Layout
@@ -30,8 +30,8 @@ seoudi-automation/
 1. **Prerequisites**
    - JDK 17
    - Maven 3.9+
-   - Google Chrome installed
-   - Internet access (for WebDriverManager) **or** a locally downloaded ChromeDriver binary that you can point to via `chromeDriverPath`
+   - Mozilla Firefox installed
+   - Internet access (for WebDriverManager) **or** a locally downloaded GeckoDriver binary that you can point to via `geckoDriverPath`
 
 2. **Clone & Install**
    ```bash
@@ -41,9 +41,9 @@ seoudi-automation/
    ```
 
 3. **Configure**
-   - Update `src/test/resources/config.properties` for `baseUrl`, `storeSelectionUrl`, `browser` (chrome), and optionally credentials (`validEmail`, `validPassword`) for TC-01-01.
+   - Update `src/test/resources/config.properties` for `baseUrl`, `storeSelectionUrl`, `browser` (firefox), and optionally credentials (`validEmail`, `validPassword`) for TC-01-01.
    - Set `headless=false` if you want to see the browser window while debugging.
-   - If your network blocks WebDriverManager downloads, set `chromeDriverPath` to a local ChromeDriver binary to avoid skipped runs.
+   - If your network blocks WebDriverManager downloads, set `geckoDriverPath` to a local GeckoDriver binary to avoid skipped or failed runs.
 
 ## Running Tests
 - Default suite with parallel methods:
@@ -66,7 +66,7 @@ seoudi-automation/
 - Keep locators tidy; update `TODO` tags once verified on the live site.
 - Add new features under `com.seoudi.pages` and `com.seoudi.tests` with matching package folders.
 - Shared helpers belong in `com.seoudi.core` or `com.seoudi.pages.common`.
-- Prefer headless Chrome for CI; adjust ChromeOptions in `DriverFactory` if full browser is required.
+- Prefer headless Firefox for CI; adjust FirefoxOptions in `DriverFactory` if full browser is required.
 
 ## Ownership
 - Engineer إسماعيل: Login (Feature 1), Add to Cart from PLP (Feature 14), Filters (Feature 9), Sorting (Feature 10), Pagination (Feature 15).

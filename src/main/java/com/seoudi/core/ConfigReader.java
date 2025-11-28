@@ -48,8 +48,8 @@ public class ConfigReader {
         return headless == null || headless.isBlank() || Boolean.parseBoolean(headless);
     }
 
-    public static String getChromeDriverPath() {
-        return get("chromeDriverPath");
+    public static String getGeckoDriverPath() {
+        return get("geckoDriverPath");
     }
 
     public static String getValidEmail() {
