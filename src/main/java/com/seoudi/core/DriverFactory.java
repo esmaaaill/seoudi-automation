@@ -31,6 +31,10 @@ public class DriverFactory {
             FirefoxOptions options = new FirefoxOptions();
             options.addArguments("--width=1920", "--height=1080");
             options.addArguments("--disable-gpu");
+            String firefoxBinary = ConfigReader.getFirefoxBinary();
+            if (firefoxBinary != null && !firefoxBinary.isBlank()) {
+                options.setBinary(firefoxBinary);
+            }
             if (ConfigReader.isHeadless()) {
                 options.addArguments("-headless");
             }

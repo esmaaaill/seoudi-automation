@@ -52,6 +52,10 @@ public class ConfigReader {
         return get("geckoDriverPath");
     }
 
+    public static String getFirefoxBinary() {
+        return get("firefoxBinary");
+    }
+
     public static String getValidEmail() {
         return get("validEmail");
     }

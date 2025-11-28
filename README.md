@@ -41,9 +41,10 @@ seoudi-automation/
    ```
 
 3. **Configure**
-   - Update `src/test/resources/config.properties` for `baseUrl`, `storeSelectionUrl`, `browser` (firefox), and optionally credentials (`validEmail`, `validPassword`) for TC-01-01.
-   - Set `headless=false` if you want to see the browser window while debugging.
-   - If your network blocks WebDriverManager downloads, set `geckoDriverPath` to a local GeckoDriver binary to avoid skipped or failed runs.
+ - Update `src/test/resources/config.properties` for `baseUrl`, `storeSelectionUrl`, `browser` (firefox), and optionally credentials (`validEmail`, `validPassword`) for TC-01-01.
+ - Set `headless=false` if you want to see the browser window while debugging.
+ - If your network blocks WebDriverManager downloads, set `geckoDriverPath` to a local GeckoDriver binary to avoid skipped or failed runs.
+ - If Firefox is not on your PATH, set `firefoxBinary` to the full executable location (e.g., `/usr/bin/firefox` or `C:\\Program Files\\Mozilla Firefox\\firefox.exe`).
 
 ## Running Tests
 - Default suite with parallel methods:
