@@ -13,11 +13,17 @@ public class ConfigReader {
 
     static {
         try (InputStream inputStream = ConfigReader.class.getClassLoader().getResourceAsStream("config.properties")) {
+            if (inputStream == null) {
+                throw new IllegalStateException("config.properties not found in classpath");
+            }
+            PROPERTIES.load(inputStream);
+
             if (inputStream != null) {
                 PROPERTIES.load(inputStream);
             } else {
                 throw new IllegalStateException("config.properties not found in classpath");
             }
+           main
         } catch (IOException e) {
             throw new RuntimeException("Unable to load config.properties", e);
         }
@@ -43,10 +49,15 @@ public class ConfigReader {
         return get("browser");
     }
 
+    public static boolean isHeadless() {
+        String headless = get("headless");
+        return headless != null && Boolean.parseBoolean(headless);
+
  codex/generate-complete-ui-test-automation-framework-8pf3uv
     public static boolean isHeadless() {
         String headless = get("headless");
         return headless == null || headless.isBlank() || Boolean.parseBoolean(headless);
+        main
     }
 
     public static String getGeckoDriverPath() {
@@ -57,8 +68,6 @@ public class ConfigReader {
         return get("firefoxBinary");
     }
 
-
- main
     public static String getValidEmail() {
         return get("validEmail");
     }

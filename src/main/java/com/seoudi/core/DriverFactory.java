@@ -2,6 +2,12 @@ package com.seoudi.core;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+
+import java.time.Duration;
+
+=======
  codex/generate-complete-ui-test-automation-framework-8pf3uv
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
@@ -12,6 +18,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.time.Duration;
 
+ main
 /**
  * Manages WebDriver instances in a thread-safe manner for parallel execution.
  */
@@ -22,7 +29,8 @@ public class DriverFactory {
     private DriverFactory() {
         // Utility class
     }
- codex/generate-complete-ui-test-automation-framework-8pf3uv
+
+ main
 
     public static void initDriver() {
         String browser = ConfigReader.getBrowser();
@@ -33,6 +41,20 @@ public class DriverFactory {
             } else {
                 WebDriverManager.firefoxdriver().setup();
             }
+
+            FirefoxOptions options = new FirefoxOptions();
+            options.addArguments("--width=1920", "--height=1080");
+            options.addArguments("--disable-gpu");
+            String firefoxBinary = ConfigReader.getFirefoxBinary();
+            if (firefoxBinary != null && !firefoxBinary.isBlank()) {
+                options.setBinary(firefoxBinary);
+            }
+            if (ConfigReader.isHeadless()) {
+                options.addArguments("-headless");
+            }
+
+            WebDriver driver = new FirefoxDriver(options);
+=======
 
             FirefoxOptions options = new FirefoxOptions();
             options.addArguments("--width=1920", "--height=1080");
@@ -58,6 +80,7 @@ public class DriverFactory {
             options.addArguments("--window-size=1920,1080");
             options.addArguments("--disable-gpu", "--no-sandbox");
             WebDriver driver = new ChromeDriver(options);
+ main
  main
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
             driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
