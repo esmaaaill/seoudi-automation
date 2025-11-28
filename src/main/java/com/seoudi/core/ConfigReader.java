@@ -43,6 +43,7 @@ public class ConfigReader {
         return get("browser");
     }
 
+ codex/generate-complete-ui-test-automation-framework-8pf3uv
     public static boolean isHeadless() {
         String headless = get("headless");
         return headless == null || headless.isBlank() || Boolean.parseBoolean(headless);
@@ -56,6 +57,8 @@ public class ConfigReader {
         return get("firefoxBinary");
     }
 
+
+ main
     public static String getValidEmail() {
         return get("validEmail");
     }

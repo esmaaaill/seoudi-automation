@@ -2,8 +2,13 @@ package com.seoudi.core;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
+ codex/generate-complete-ui-test-automation-framework-8pf3uv
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+ main
 
 import java.time.Duration;
 
@@ -17,6 +22,7 @@ public class DriverFactory {
     private DriverFactory() {
         // Utility class
     }
+ codex/generate-complete-ui-test-automation-framework-8pf3uv
 
     public static void initDriver() {
         String browser = ConfigReader.getBrowser();
@@ -40,6 +46,19 @@ public class DriverFactory {
             }
 
             WebDriver driver = new FirefoxDriver(options);
+
+
+    public static void initDriver() {
+        String browser = ConfigReader.getBrowser();
+        if (browser == null || browser.isBlank() || browser.equalsIgnoreCase("chrome")) {
+            WebDriverManager.chromedriver().setup();
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--remote-allow-origins=*");
+            options.addArguments("--headless=new");
+            options.addArguments("--window-size=1920,1080");
+            options.addArguments("--disable-gpu", "--no-sandbox");
+            WebDriver driver = new ChromeDriver(options);
+ main
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
             driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
             driver.manage().deleteAllCookies();
