@@ -3,25 +3,58 @@ package com.seoudi.core;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
+import java.time.Duration;
+
+/**
+ * Manages WebDriver instances in a thread-safe manner for parallel execution.
+ */
 public class DriverFactory {
 
-    private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+    private static final ThreadLocal<WebDriver> DRIVER = new ThreadLocal<>();
 
-    public static void initializeDriver() {
-        WebDriverManager.chromedriver().setup();
-        driver.set(new ChromeDriver());
-        driver.get().manage().window().maximize();
+    private DriverFactory() {
+        // Utility class
+    }
+
+    public static void initDriver() {
+        String browser = ConfigReader.getBrowser();
+        if (browser == null || browser.isBlank() || browser.equalsIgnoreCase("chrome")) {
+            String driverPath = ConfigReader.getChromeDriverPath();
+            if (driverPath != null && !driverPath.isBlank()) {
+                System.setProperty("webdriver.chrome.driver", driverPath);
+            } else {
+                WebDriverManager.chromedriver().setup();
+            }
+
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--remote-allow-origins=*");
+            options.addArguments("--window-size=1920,1080");
+            options.addArguments("--disable-gpu", "--no-sandbox");
+            if (ConfigReader.isHeadless()) {
+                options.addArguments("--headless=new");
+            }
+
+            WebDriver driver = new ChromeDriver(options);
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+            driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
+            driver.manage().deleteAllCookies();
+            DRIVER.set(driver);
+        } else {
+            throw new UnsupportedOperationException("Browser not supported yet: " + browser);
+        }
     }
 
     public static WebDriver getDriver() {
-        return driver.get();
+        return DRIVER.get();
     }
 
     public static void quitDriver() {
-        if (driver.get() != null) {
-            driver.get().quit();
-            driver.remove();
+        WebDriver driver = DRIVER.get();
+        if (driver != null) {
+            driver.quit();
+            DRIVER.remove();
         }
     }
 }
