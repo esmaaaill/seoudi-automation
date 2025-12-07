@@ -39,19 +39,34 @@ public class ConfigReader {
     }
 
     public static String getBrowser() {
+        String browser = System.getenv("BROWSER");
+        if (browser != null && !browser.isBlank()) {
+            return browser;
+        }
         return get("browser");
     }
 
     public static boolean isHeadless() {
-        String headless = get("headless");
+        String headless = System.getenv("HEADLESS");
+        if (headless == null || headless.isBlank()) {
+            headless = get("headless");
+        }
         return headless != null && Boolean.parseBoolean(headless);
     }
 
     public static String getGeckoDriverPath() {
+        String fromEnv = System.getenv("GECKO_DRIVER_PATH");
+        if (fromEnv != null && !fromEnv.isBlank()) {
+            return fromEnv;
+        }
         return get("geckoDriverPath");
     }
 
     public static String getFirefoxBinary() {
+        String binary = System.getenv("FIREFOX_BINARY");
+        if (binary != null && !binary.isBlank()) {
+            return binary;
+        }
         return get("firefoxBinary");
     }
 

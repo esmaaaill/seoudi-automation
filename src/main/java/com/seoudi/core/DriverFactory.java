@@ -41,6 +41,11 @@ public class DriverFactory {
                 String firefoxBinary = ConfigReader.getFirefoxBinary();
                 if (firefoxBinary != null && !firefoxBinary.isBlank()) {
                     firefoxOptions.setBinary(firefoxBinary);
+                } else {
+                    String pathHint = System.getenv("FIREFOX_BINARY");
+                    if (pathHint == null || pathHint.isBlank()) {
+                        throw new IllegalStateException("Firefox binary was not found. Set firefoxBinary in config.properties or FIREFOX_BINARY env var to the full path of the Firefox executable installed on your machine (e.g., /usr/bin/firefox).");
+                    }
                 }
                 if (ConfigReader.isHeadless()) {
                     firefoxOptions.addArguments("-headless");
