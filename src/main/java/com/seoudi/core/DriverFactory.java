@@ -6,67 +6,31 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 
 /**
- * Manages WebDriver instances in a thread-safe manner for parallel execution.
+ * Manages thread-safe WebDriver lifecycle for parallel execution.
  */
-public class DriverFactory {
+public final class DriverFactory {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DriverFactory.class);
     private static final ThreadLocal<WebDriver> DRIVER = new ThreadLocal<>();
 
     private DriverFactory() {
-        // Utility class
     }
 
     public static void initDriver() {
-        String browser = ConfigReader.getBrowser();
-        if (browser == null || browser.isBlank()) {
-            browser = "firefox";
-        }
+        String browser = BrowserConfigResolver.resolveBrowser(ConfigReader.getBrowser(), "firefox");
+        LOGGER.info("Initializing browser: {}", browser);
 
-        WebDriver driver;
-        switch (browser.toLowerCase()) {
-            case "firefox":
-                String driverPath = ConfigReader.getGeckoDriverPath();
-                if (driverPath != null && !driverPath.isBlank()) {
-                    System.setProperty("webdriver.gecko.driver", driverPath);
-                } else {
-                    WebDriverManager.firefoxdriver().setup();
-                }
-
-                FirefoxOptions firefoxOptions = new FirefoxOptions();
-                firefoxOptions.addArguments("--width=1920", "--height=1080", "--disable-gpu");
-                String firefoxBinary = ConfigReader.getFirefoxBinary();
-                if (firefoxBinary != null && !firefoxBinary.isBlank()) {
-                    firefoxOptions.setBinary(firefoxBinary);
-                } else {
-                    String pathHint = System.getenv("FIREFOX_BINARY");
-                    if (pathHint == null || pathHint.isBlank()) {
-                        throw new IllegalStateException("Firefox binary was not found. Set firefoxBinary in config.properties or FIREFOX_BINARY env var to the full path of the Firefox executable installed on your machine (e.g., /usr/bin/firefox).");
-                    }
-                }
-                if (ConfigReader.isHeadless()) {
-                    firefoxOptions.addArguments("-headless");
-                }
-
-                driver = new FirefoxDriver(firefoxOptions);
-                break;
-
-            case "chrome":
-                WebDriverManager.chromedriver().setup();
-                ChromeOptions chromeOptions = new ChromeOptions();
-                chromeOptions.addArguments("--remote-allow-origins=*", "--window-size=1920,1080", "--disable-gpu", "--no-sandbox");
-                if (ConfigReader.isHeadless()) {
-                    chromeOptions.addArguments("--headless=new");
-                }
-                driver = new ChromeDriver(chromeOptions);
-                break;
-
-            default:
-                throw new UnsupportedOperationException("Browser not supported yet: " + browser);
-        }
+        WebDriver driver = switch (browser) {
+            case "firefox" -> createFirefoxDriver();
+            case "chrome" -> createChromeDriver();
+            default -> throw new UnsupportedOperationException("Unsupported browser: " + browser);
+        };
 
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
@@ -74,8 +38,47 @@ public class DriverFactory {
         DRIVER.set(driver);
     }
 
+    private static WebDriver createFirefoxDriver() {
+        String driverPath = ConfigReader.getGeckoDriverPath();
+        if (driverPath != null && !driverPath.isBlank()) {
+            System.setProperty("webdriver.gecko.driver", driverPath);
+        } else {
+            WebDriverManager.firefoxdriver().setup();
+        }
+
+        FirefoxOptions options = new FirefoxOptions();
+        options.addArguments("--width=1920", "--height=1080", "--disable-gpu");
+
+        String firefoxBinary = ConfigReader.getFirefoxBinary();
+        if (firefoxBinary != null && !firefoxBinary.isBlank()) {
+            options.setBinary(firefoxBinary);
+        }
+
+        if (ConfigReader.isHeadless()) {
+            options.addArguments("-headless");
+        }
+
+        return new FirefoxDriver(options);
+    }
+
+    private static WebDriver createChromeDriver() {
+        WebDriverManager.chromedriver().setup();
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--remote-allow-origins=*", "--window-size=1920,1080", "--disable-gpu", "--no-sandbox");
+
+        if (ConfigReader.isHeadless()) {
+            options.addArguments("--headless=new");
+        }
+
+        return new ChromeDriver(options);
+    }
+
     public static WebDriver getDriver() {
-        return DRIVER.get();
+        WebDriver driver = DRIVER.get();
+        if (driver == null) {
+            throw new IllegalStateException("WebDriver is not initialized. Call initDriver() first.");
+        }
+        return driver;
     }
 
     public static void quitDriver() {
@@ -83,6 +86,7 @@ public class DriverFactory {
         if (driver != null) {
             driver.quit();
             DRIVER.remove();
+            LOGGER.info("WebDriver session closed successfully.");
         }
     }
 }
