@@ -9,7 +9,7 @@ A production-style Java UI test automation project that showcases clean architec
 - **Test Frameworks:** TestNG (UI suites), JUnit 5 (unit tests)
 - **Test Doubles:** Mockito
 - **Driver Management:** WebDriverManager
-- **Logging:** SLF4J
+
 
 ## Architecture Overview
 This repository follows a layered test automation architecture inspired by clean-code and SOLID principles:
